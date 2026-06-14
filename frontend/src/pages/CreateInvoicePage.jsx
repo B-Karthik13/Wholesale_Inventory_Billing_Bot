@@ -61,18 +61,22 @@ export default function CreateInvoicePage() {
     setProductResults([]);
   };
 
-  const handleBarcodeSearch = async (e) => {
-    e.preventDefault();
-    if (!barcodeInput.trim()) return;
-    try {
-      const res = await productService.getByBarcode(barcodeInput.trim());
-      addProductToItems(res.data.data.product);
-      setBarcodeInput("");
-      toast.success(`${res.data.data.product.name} added`);
-    } catch {
-      toast.error("Product not found for this barcode");
-    }
-  };
+  const handleBarcodeSearch = async () => {
+  if (!barcodeInput.trim()) return;
+
+  try {
+    const res = await productService.getByBarcode(barcodeInput.trim());
+
+    addProductToItems(res.data.data.product);
+
+    setBarcodeInput("");
+
+    toast.success(`${res.data.data.product.name} added`);
+  } catch (err) {
+    console.error(err);
+    toast.error("Product not found for this barcode");
+  }
+};
 
   const updateItem = (idx, field, value) => {
     setItems((prev) => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item));
@@ -173,7 +177,7 @@ export default function CreateInvoicePage() {
               </h2>
 
               {/* Barcode scan */}
-              <form onSubmit={handleBarcodeSearch} className="flex gap-2 mb-4">
+              <div className="flex gap-2 mb-4">
                 <input
                   type="text"
                   className="input-field font-mono text-sm flex-1"
@@ -181,8 +185,14 @@ export default function CreateInvoicePage() {
                   value={barcodeInput}
                   onChange={(e) => setBarcodeInput(e.target.value)}
                 />
-                <button type="submit" className="btn-secondary text-sm whitespace-nowrap">Add by Barcode</button>
-              </form>
+               <button
+                  type="button"
+                  onClick={handleBarcodeSearch}
+                  className="btn-secondary text-sm whitespace-nowrap"
+                >
+                  Add by Barcode
+                </button> 
+              </div>
 
               {/* Product search */}
               <div className="relative mb-4">
