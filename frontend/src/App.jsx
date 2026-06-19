@@ -1,65 +1,66 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { AuthProvider } from "./context/AuthContext.jsx";
-import ProtectedRoute from "./components/common/ProtectedRoute.jsx";
-import DashboardLayout from "./layouts/DashboardLayout.jsx";
-import LandingPage from "./pages/LandingPage.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
-import SignupPage from "./pages/SignupPage.jsx";
-import DashboardPage from "./pages/DashboardPage.jsx";
-import ProductsPage from "./pages/ProductsPage.jsx";
-import InventoryPage from "./pages/InventoryPage.jsx";
-import InvoicesPage from "./pages/InvoicesPage.jsx";
-import CreateInvoicePage from "./pages/CreateInvoicePage.jsx";
-import InvoiceDetailPage from "./pages/InvoiceDetailPage.jsx";
-import AnalyticsPage from "./pages/AnalyticsPage.jsx";
-import SettingsPage from "./pages/SettingsPage.jsx";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useAuth } from "./store/authStore.js";
+import DashboardLayout from "./components/DashboardLayout.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import LandingPage from "./components/LandingPage.jsx";
+import LoginPage from "./components/LoginPage.jsx";
+import SignupPage from "./components/SignupPage.jsx";
+import DashboardPage from "./components/DashboardPage.jsx";
+import ProductsPage from "./components/ProductsPage.jsx";
+import InventoryPage from "./components/InventoryPage.jsx";
+import InvoicesPage from "./components/InvoicesPage.jsx";
+import CreateInvoicePage from "./components/CreateInvoicePage.jsx";
+import InvoiceDetailPage from "./components/InvoiceDetailPage.jsx";
+import AnalyticsPage from "./components/AnalyticsPage.jsx";
+import SettingsPage from "./components/SettingsPage.jsx";
 
-export default function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LandingPage />
+  },
+  {
+    path: "/login",
+    element: <LoginPage />
+  },
+  {
+    path: "/signup",
+    element: <SignupPage />
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { index: true, element: <DashboardPage /> },
+      { path: "products", element: <ProductsPage /> },
+      { path: "inventory", element: <InventoryPage /> },
+      { path: "invoices", element: <InvoicesPage /> },
+      { path: "invoices/create", element: <CreateInvoicePage /> },
+      { path: "invoices/:id", element: <InvoiceDetailPage /> },
+      { path: "analytics", element: <AnalyticsPage /> },
+      { path: "settings", element: <SettingsPage /> }
+    ]
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" replace />
+  }
+]);
 
-          {/* Protected dashboard routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<DashboardPage />} />
-            <Route path="products" element={<ProductsPage />} />
-            <Route path="inventory" element={<InventoryPage />} />
-            <Route path="invoices" element={<InvoicesPage />} />
-            <Route path="invoices/create" element={<CreateInvoicePage />} />
-            <Route path="invoices/:id" element={<InvoiceDetailPage />} />
-            <Route path="analytics" element={<AnalyticsPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
+function AppInitializer() {
+  const { loadUser } = useAuth();
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+  //restore user session on app load (matching Blog's RootLayout checkAuth pattern)
+  useEffect(() => {
+    loadUser();
+  }, [loadUser]);
 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          theme="light"
-          toastClassName="!rounded-xl !shadow-lg !border !border-surface-200"
-        />
-      </AuthProvider>
-    </BrowserRouter>
-  );
+  return <RouterProvider router={router} />;
 }
+
+export default AppInitializer;

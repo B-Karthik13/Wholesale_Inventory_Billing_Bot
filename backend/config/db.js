@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import { connect } from "mongoose";
 
+//connect to DB
 export const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/wholesale-erp");
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error(`❌ MongoDB Connection Error: ${error.message}`);
-    process.exit(1);
+    await connect(process.env.MONGODB_URL || "mongodb://localhost:27017/wholesale-erp");
+    console.log("DB connected");
+  } catch (err) {
+    console.log("Error in Db connection", err);
   }
 };

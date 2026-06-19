@@ -1,250 +1,152 @@
-# WholesaleIQ — Wholesale Inventory & Billing ERP
+# WholesaleIQ — Wholesale Inventory & Billing Bot
 
-A **production-ready MERN stack ERP** for small wholesalers to manage inventory, generate GST-compliant invoices, track sales, and visualise analytics.
+A lightweight ERP for Indian wholesalers covering inventory management, GST-compliant invoicing, barcode lookups, and sales analytics. Built on the MERN stack.
 
----
+This project's architecture, folder structure, and coding conventions follow the same engineering standards as the team's **Blog Application** reference project — flat `API/` routers on the backend, flat `components/` with a Zustand store on the frontend.
 
-## ✨ Features
+## Tech Stack
 
-| Feature | Details |
-|---|---|
-| 🔐 Authentication | JWT + bcrypt, signup/login/logout, protected routes |
-| 📦 Product Management | Full CRUD, SKU, barcode, category, GST rate, reorder threshold |
-| 🏭 Inventory Tracking | Stock levels, low-stock alerts, out-of-stock detection |
-| 📱 Barcode Scanner Sim | Lookup products instantly by barcode — no hardware needed |
-| 🧾 Invoice System | Create, view, delete invoices with auto GST calculation |
-| 💰 GST Billing | 0%, 5%, 12%, 18%, 28% rates, full GST breakdown on invoices |
-| ⬇ PDF Export | Branded, professional PDF invoices via jsPDF + AutoTable |
-| 📊 Sales Analytics | Daily/monthly charts, top-products doughnut, revenue trends |
-| ⚠️ Low Stock Alerts | Automatic detection and dashboard warnings |
-| 📱 Responsive Design | Mobile-first Tailwind CSS, works on any screen size |
-| 🌐 Landing Page | Full marketing site with hero, features, benefits, how-it-works |
+**Backend**
+- Node.js + Express
+- MongoDB + Mongoose
+- JWT authentication (Bearer token)
+- bcryptjs for password hashing
+- express-validator for request validation
 
----
+**Frontend**
+- React 18 + Vite
+- React Router v6
+- Zustand for global auth state
+- React Hook Form
+- Axios
+- Tailwind CSS
+- Chart.js (via react-chartjs-2)
+- jsPDF for invoice PDF export
 
-## 🛠 Tech Stack
-
-### Frontend
-- **React 18** + **Vite 5**
-- **Tailwind CSS 3** (custom design system)
-- **React Router DOM 6** (nested routes)
-- **React Hook Form** (validation)
-- **Chart.js 4** + **react-chartjs-2** (analytics)
-- **jsPDF** + **jspdf-autotable** (PDF invoices)
-- **Axios** (HTTP client with interceptors)
-- **React Toastify** (notifications)
-
-### Backend
-- **Node.js** + **Express.js** (ESM modules)
-- **MongoDB** + **Mongoose**
-- **JWT** + **bcryptjs** (authentication)
-- **express-validator** (input validation)
-- **morgan** (request logging)
-
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 wholesale-erp/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── common/         # Modal, ConfirmDialog, EmptyState, Spinner
-│   │   │   ├── dashboard/      # StatCard
-│   │   │   └── products/       # ProductForm
-│   │   ├── context/            # AuthContext (JWT state)
-│   │   ├── layouts/            # DashboardLayout (sidebar)
-│   │   ├── pages/              # All page components
-│   │   ├── services/           # API service modules
-│   │   └── utils/              # format.js, pdf.js
-│   ├── tailwind.config.js
-│   └── vite.config.js
+├── Backend/
+│   ├── API/                  # Route + controller logic combined per domain
+│   │   ├── AuthAPI.js
+│   │   ├── ProductAPI.js
+│   │   ├── InvoiceAPI.js
+│   │   ├── AnalyticsAPI.js
+│   │   └── DashboardAPI.js
+│   ├── Models/                # Mongoose schemas
+│   │   ├── UserModel.js
+│   │   ├── ProductModel.js
+│   │   ├── InvoiceModel.js
+│   │   └── SalesModel.js
+│   ├── middlewares/
+│   │   ├── verifyToken.js     # JWT auth guard + token generation
+│   │   └── validate.js        # express-validator error formatter
+│   ├── config/
+│   │   └── db.js              # Mongoose connection
+│   ├── server.js              # App entry point, middleware + error handling
+│   ├── package.json
+│   ├── nodemon.json
+│   └── .env
 │
-└── backend/
-    ├── config/                 # MongoDB connection
-    ├── controllers/            # Route handlers
-    ├── middleware/             # auth, error, validate
-    ├── models/                 # Mongoose schemas
-    ├── routes/                 # Express routers
-    └── server.js
+└── Frontend/
+    ├── src/
+    │   ├── api/                # Axios instance + per-domain API call groups
+    │   │   ├── axiosInstance.js
+    │   │   ├── productApi.js
+    │   │   ├── invoiceApi.js
+    │   │   └── analyticsApi.js
+    │   ├── store/
+    │   │   └── authStore.js    # Zustand auth store
+    │   ├── components/          # Flat — pages, layout, and shared UI together
+    │   │   ├── LandingPage.jsx
+    │   │   ├── LoginPage.jsx
+    │   │   ├── SignupPage.jsx
+    │   │   ├── DashboardLayout.jsx
+    │   │   ├── DashboardPage.jsx
+    │   │   ├── ProductsPage.jsx
+    │   │   ├── InventoryPage.jsx
+    │   │   ├── InvoicesPage.jsx
+    │   │   ├── CreateInvoicePage.jsx
+    │   │   ├── InvoiceDetailPage.jsx
+    │   │   ├── AnalyticsPage.jsx
+    │   │   ├── SettingsPage.jsx
+    │   │   ├── ProtectedRoute.jsx
+    │   │   ├── ProductForm.jsx
+    │   │   ├── Modal.jsx
+    │   │   ├── ConfirmDialog.jsx
+    │   │   ├── EmptyState.jsx
+    │   │   ├── LoadingSpinner.jsx
+    │   │   └── StatCard.jsx
+    │   ├── utils/
+    │   │   ├── format.js        # Currency/date formatting, constants
+    │   │   └── pdf.js           # Invoice PDF generation
+    │   ├── App.jsx               # createBrowserRouter route tree
+    │   ├── main.jsx
+    │   └── index.css
+    ├── index.html
+    ├── vite.config.js
+    ├── tailwind.config.js
+    ├── postcss.config.js
+    └── package.json
 ```
 
----
+## Features
 
-## 🚀 Quick Start
+- **Inventory management** — SKU/barcode-tracked products across 14+ categories, with reorder thresholds and low-stock alerts
+- **GST invoicing** — auto-calculated tax per line item, PDF export, customer records
+- **Barcode lookup** — instant product lookup by barcode, usable both in Inventory and while building an invoice
+- **Sales analytics** — daily/weekly/monthly revenue, top-selling products, month-over-month growth
+- **Auth & company profile** — JWT-based login/signup, per-user data isolation, editable company details for invoice branding
 
-### Prerequisites
-- **Node.js** v18+
-- **MongoDB** running locally (`mongodb://localhost:27017`) **or** a MongoDB Atlas URI
+## Getting Started
 
----
-
-### 1. Clone / Extract
-
-```bash
-unzip wholesale-erp.zip
-cd wholesale-erp
-```
-
----
-
-### 2. Backend Setup
+### Backend
 
 ```bash
-cd backend
+cd Backend
 npm install
+npm run dev      # nodemon, http://localhost:3000
 ```
 
-Edit **`backend/.env`** with your values:
+Required environment variables (`.env`):
 
-```env
+```
 PORT=3000
-MONGODB_URI=mongodb://localhost:27017/wholesale-erp
-JWT_SECRET=secret_key
+MONGODB_URL=<your MongoDB connection string>
+JWT_SECRET=<your secret>
 JWT_EXPIRE=7d
 NODE_ENV=development
 ```
 
-Start the backend:
+### Frontend
 
 ```bash
-npm run dev
-```
-
-✅ Server starts on `http://localhost:3000`
-
----
-
-### 3. Frontend Setup
-
-```bash
-cd ../frontend
+cd Frontend
 npm install
-npm run dev
+npm run dev      # Vite, http://localhost:5173
 ```
 
-✅ App opens at `http://localhost:5173`
+Required environment variable (`.env`):
 
----
+```
+VITE_API_URL=http://localhost:3000/api
+```
 
-## 🔌 API Endpoints
+## API Overview
 
-### Auth
-| Method | Route | Description |
+| Domain | Base path | Auth required |
 |---|---|---|
-| POST | `/api/auth/register` | Create account |
-| POST | `/api/auth/login` | Login, returns JWT |
-| GET | `/api/auth/me` | Get current user |
-| PUT | `/api/auth/profile` | Update name & company |
-| PUT | `/api/auth/change-password` | Change password |
+| Auth | `/api/auth` | Mixed (register/login public, rest protected) |
+| Products | `/api/products` | Yes |
+| Invoices | `/api/invoices` | Yes |
+| Analytics | `/api/analytics` | Yes |
+| Dashboard | `/api/dashboard` | Yes |
 
-### Products
-| Method | Route | Description |
-|---|---|---|
-| GET | `/api/products` | List with search/filter/paginate |
-| POST | `/api/products` | Create product |
-| GET | `/api/products/:id` | Get one |
-| PUT | `/api/products/:id` | Update |
-| DELETE | `/api/products/:id` | Soft delete |
-| GET | `/api/products/barcode/:barcode` | Lookup by barcode |
-| GET | `/api/products/alerts/low-stock` | Low stock list |
+All protected routes require an `Authorization: Bearer <token>` header. Tokens are issued on login and stored client-side in `localStorage`.
 
-### Invoices
-| Method | Route | Description |
-|---|---|---|
-| GET | `/api/invoices` | List with search/status filter |
-| POST | `/api/invoices` | Create (auto-deducts stock, creates sales record) |
-| GET | `/api/invoices/:id` | Get one |
-| PUT | `/api/invoices/:id` | Update status/notes |
-| DELETE | `/api/invoices/:id` | Delete (restores stock) |
+## Notes
 
-### Analytics
-| Method | Route | Description |
-|---|---|---|
-| GET | `/api/analytics/daily` | Daily revenue (last N days) |
-| GET | `/api/analytics/monthly` | Monthly revenue (last N months) |
-| GET | `/api/analytics/top-products` | Top selling products |
-| GET | `/api/analytics/revenue-trend` | This vs last month comparison |
-
-### Dashboard
-| Method | Route | Description |
-|---|---|---|
-| GET | `/api/dashboard/stats` | All KPIs + recent invoices + recent sales |
-
----
-
-## 🗄 Database Models
-
-### User
-```js
-{ name, email, password (hashed), role, company: { name, gstNumber, address, phone, email } }
-```
-
-### Product
-```js
-{ name, category, sku, barcode, description, quantity, unit, price, costPrice, threshold, gstRate, isActive }
-```
-
-### Invoice
-```js
-{ invoiceNumber (auto), customer: {...}, items: [{product, qty, price, gstRate, gstAmount, total}], subtotal, totalGst, discount, grandTotal, status, paymentMethod, notes }
-```
-
-### Sales
-```js
-{ invoice, invoiceNumber, revenue, gstCollected, productsSold: [{product, qty, revenue}], date }
-```
-
----
-
-## 🔒 Security Notes
-
-- All dashboard API routes require a valid `Authorization: Bearer <token>` header
-- Passwords hashed with **bcrypt** (12 salt rounds)
-- Each user's data is isolated by `user: req.user._id` filter on all queries
-- JWT expires in 7 days by default (configurable via `JWT_EXPIRE`)
-- Input validation on all POST routes via `express-validator`
-
----
-
-## 📸 Pages
-
-| Page | Path |
-|---|---|
-| Landing | `/` |
-| Sign Up | `/signup` |
-| Login | `/login` |
-| Dashboard | `/dashboard` |
-| Products | `/dashboard/products` |
-| Inventory & Scanner | `/dashboard/inventory` |
-| Invoices | `/dashboard/invoices` |
-| Create Invoice | `/dashboard/invoices/create` |
-| Invoice Detail + PDF | `/dashboard/invoices/:id` |
-| Analytics | `/dashboard/analytics` |
-| Settings | `/dashboard/settings` |
-
----
-
-## 🌐 Production Deployment
-
-For production, set:
-
-```env
-NODE_ENV=production
-JWT_SECRET=<long-random-string>
-MONGODB_URI=<your-atlas-uri>
-```
-
-Build the frontend:
-```bash
-cd frontend && npm run build
-```
-
-Serve `frontend/dist` with Nginx or via Express static middleware.
-
----
-
-## 📝 License
-
-MIT — free to use and modify for personal and commercial projects.
+- Creating an invoice automatically deducts stock and records a `Sales` entry; deleting an invoice restores stock.
+- Products are soft-deleted (`isActive: false`) rather than removed, so historical invoices stay intact.
+- GST rates are restricted to India's standard slabs: 0%, 5%, 12%, 18%, 28%.
